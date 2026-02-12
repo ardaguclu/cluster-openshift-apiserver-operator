@@ -80,7 +80,7 @@ func TestKMSEncryptionProvidersMigration(t *testing.T) {
 		BasicScenario: library.BasicScenario{
 			Namespace:                       operatorclient.GlobalMachineSpecifiedConfigNamespace,
 			LabelSelector:                   "encryption.apiserver.operator.openshift.io/component" + "=" + operatorclient.TargetNamespace,
-			EncryptionConfigSecretName:      "encryption-config-openshift-oauth-apiserver",
+			EncryptionConfigSecretName:      fmt.Sprintf("encryption-config-%s", operatorclient.TargetNamespace),
 			EncryptionConfigSecretNamespace: operatorclient.GlobalMachineSpecifiedConfigNamespace,
 			OperatorNamespace:               operatorclient.OperatorNamespace,
 			TargetGRs:                       operatorencryption.DefaultTargetGRs,

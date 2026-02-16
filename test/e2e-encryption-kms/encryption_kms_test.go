@@ -74,8 +74,16 @@ func TestKMSEncryptionOnOff(t *testing.T) {
 // 5. Migrates between the providers in the shuffled order
 // 6. Verifies token is correctly encrypted after each migration
 func TestKMSEncryptionProvidersMigration(t *testing.T) {
-	ns := fmt.Sprintf("test-kms-encryption-shuffle-%d", rand.IntN(4))
 	librarykms.DeployUpstreamMockKMSPlugin(context.Background(), t, library.GetClients(t).Kube, librarykms.WellKnownUpstreamMockKMSPluginNamespace, librarykms.WellKnownUpstreamMockKMSPluginImage)
+
+	ctx := context.TODO()
+	cs := operatorencryption.GetClients(t)
+
+	ns := fmt.Sprintf("test-kms-encryption-shuffle-%d", rand.IntN(4))
+	_, err := cs.KubeClient.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: ns}}, metav1.CreateOptions{})
+	require.NoError(t, err)
+	defer cs.KubeClient.CoreV1().Namespaces().Delete(ctx, ns, metav1.DeleteOptions{})
+
 	library.TestEncryptionProvidersMigration(t, library.ProvidersMigrationScenario{
 		BasicScenario: library.BasicScenario{
 			Namespace:                       operatorclient.GlobalMachineSpecifiedConfigNamespace,
